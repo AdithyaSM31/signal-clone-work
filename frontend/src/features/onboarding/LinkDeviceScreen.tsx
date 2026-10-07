@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
@@ -96,9 +97,9 @@ export function LinkDeviceScreen() {
           </button>
         </div>
       )}
-      <a href="/onboarding/" className="mt-8 text-[14px] font-medium text-primary hover:underline">
+      <Link href="/onboarding/" className="mt-8 text-[14px] font-medium text-primary hover:underline">
         Sign in with a phone number instead
-      </a>
+      </Link>
     </Shell>
   );
 }

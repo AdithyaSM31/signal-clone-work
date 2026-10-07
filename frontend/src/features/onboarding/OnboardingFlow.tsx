@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Camera, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
@@ -233,9 +234,9 @@ export function OnboardingFlow() {
           Next
         </PrimaryButton>
       </form>
-      <a href="/link/" className="mt-6 text-[14px] font-medium text-primary hover:underline">
+      <Link href="/link/" className="mt-6 text-[14px] font-medium text-primary hover:underline">
         Link this browser to an existing account
-      </a>
+      </Link>
     </Shell>
   );
 }

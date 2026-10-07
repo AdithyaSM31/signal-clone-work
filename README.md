@@ -403,6 +403,37 @@ around the clock.
 
 ---
 
+## Android app
+
+The same frontend is packaged as an Android app with [Capacitor](https://capacitorjs.com) (`frontend/android/`). It
+bundles the static build and talks to the deployed API, so it behaves exactly like the website, with a few native
+touches: the hardware back button closes panels, then the open chat, then exits; microphone and camera permissions are
+requested the first time you record a voice note or scan a QR code. Desktop-style notifications aren't available
+inside the app.
+
+**Install:** download `SignalClone.apk` from the repository's latest
+[Release](../../releases/latest) (or from a run of the *Android APK* workflow under Actions), open it on your phone,
+and allow "Install unknown apps" when Android asks. The APK is debug-signed: fine for a demo, not for the Play Store.
+Sign in with a demo phone number and the default PIN `123456`.
+
+**Build it yourself** (needs the Android SDK and JDK 21):
+
+```bash
+cd frontend
+npm ci
+npm run android:apk        # → frontend/SignalClone.apk
+```
+
+The API address is baked in at build time; it defaults to the deployed API and can be changed with
+`NEXT_PUBLIC_API_URL=https://<your-api> npm run android:apk`. The API must allow the app's origin, `https://localhost`,
+in `CORS_ORIGINS` (already in `render.yaml` and the local default).
+
+**Releases:** pushing a tag such as `v1.0.0` runs `.github/workflows/android.yml`, which builds the APK and attaches it
+to a GitHub Release (set the repository variable `ANDROID_API_URL` to point it at a different API). The launcher icon
+and splash screen are generated from the app's logo with `scripts/android_icons.py`.
+
+---
+
 ## Assumptions and simplifications
 
 - **"Web layout" means Signal Desktop** (Signal has no browser client) and **"mobile layout" means Signal Android**;
@@ -445,6 +476,7 @@ frontend/
     lib/            API client + generated types, realtime client, outbox, receipts, polls, pins, folders, voice…
     stores/         Zustand stores (auth, ui, outbox, typing, reply, editing, toast)
   e2e/              Playwright two-user test
-.github/workflows/  CI and Render keep-alive
+  android/          Capacitor Android project (npm run android:apk)
+.github/workflows/  CI, Render keep-alive, Android APK build
 render.yaml         Render Blueprint
 ```

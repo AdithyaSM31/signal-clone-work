@@ -16,3 +16,6 @@ docs/ui-reference/
 # Executor workspace
 .superpowers/
 /data/
+
+# Android build output
+*.apk

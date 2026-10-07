@@ -18,6 +18,7 @@ import { ResizableListPane } from "./ResizableListPane";
 import { useSelectionSync } from "./useSelectionSync";
 import { useShortcuts } from "./useShortcuts";
 import { useNotifications } from "@/lib/useNotifications";
+import { installNativeBackButton } from "@/lib/nativeBack";
 
 export interface ShellSlots {
   chatList: ReactNode;
@@ -61,6 +62,17 @@ export function AppShell(slots: ShellSlots) {
   useEffect(() => {
     if (!token) router.replace("/onboarding/");
   }, [token, router]);
+
+  // Android app: the hardware back button closes panels/chats and exits from the chat list.
+  useEffect(() => {
+    let remove = () => {};
+    let cancelled = false;
+    void installNativeBackButton().then((r) => (cancelled ? r() : (remove = r)));
+    return () => {
+      cancelled = true;
+      remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (!me) return;

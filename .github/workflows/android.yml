@@ -1,0 +1,50 @@
+name: Android APK
+
+# Builds the Capacitor Android app (debug-signed, installable directly).
+# Every run uploads the APK as a workflow artifact; pushing a tag like v1.0.0 also attaches it to a GitHub Release.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write # create the Release on tag pushes
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      # The API the app talks to (baked in at build time). Override with the repository variable ANDROID_API_URL.
+      NEXT_PUBLIC_API_URL: ${{ vars.ANDROID_API_URL || 'https://signal-clone-asm20-api.onrender.com' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - run: npm run android:apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SignalClone-apk
+          path: frontend/SignalClone.apk
+          if-no-files-found: error
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: frontend/SignalClone.apk
+          body: |
+            Signal Clone for Android (debug-signed).
+
+            Install: download SignalClone.apk on your phone, open it, and allow "Install unknown apps" for your
+            browser or file manager when Android asks. Sign in with a demo account's phone number (see README)
+            and the default PIN 123456.

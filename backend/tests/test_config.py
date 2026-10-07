@@ -26,3 +26,9 @@ def test_sqlite_used_without_database_url():
 
     url, connect_args = engine_args(Settings(database_url=None, database_path="./data/x.db"))
     assert url == "sqlite+aiosqlite:///./data/x.db" and connect_args == {}
+
+
+def test_android_app_origin_allowed_by_default(monkeypatch):
+    # The Capacitor Android app serves the frontend from https://localhost.
+    monkeypatch.delenv("CORS_ORIGINS", raising=False)
+    assert "https://localhost" in Settings(_env_file=None).cors_origins
